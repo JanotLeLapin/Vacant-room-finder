@@ -1,4 +1,4 @@
-import requests, json, html
+import requests, json, html, asyncio
 from datetime import datetime, timedelta
 import re
 
@@ -213,13 +213,22 @@ class FreeRoomFinder(commands.Cog):
 
         await ctx.send(embed=em)
 
-
-
     @find_room.error
     async def test_on_error(self, ctx, error):
         """ Sends the suitable error message to user """
         print(f'\033[91mError: <{ctx.command}> {error}\033[0m')
         await ctx.send("ERR - `{}`".format(error))
 
-def setup(bot):
-    bot.add_cog(FreeRoomFinder(bot))
+
+intents = discord.Intents.default()
+intents.guild_messages = True
+intents.message_content = True
+intents.emojis = True
+bot = commands.Bot(command_prefix=":", intents=intents)
+
+async def main():
+    async with bot:
+        await bot.add_cog(FreeRoomFinder(bot))
+        # await bot.start("...")
+
+asyncio.run(main())
